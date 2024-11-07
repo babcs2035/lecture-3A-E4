@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class EvolutionManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class EvolutionManager : MonoBehaviour
 
     private List<GameObject> population = new List<GameObject>(); // 現在の集団
     private List<float> fitnessScores = new List<float>(); // 各個体の適応度スコア
+
+    private Vector3 initialPosition = new Vector3(25, 15, 0); // 初期位置
 
     void Start()
     {
@@ -23,13 +26,30 @@ public class EvolutionManager : MonoBehaviour
         // 集団を初期化し、ランダムな形状パラメータで紙飛行機を生成
         for (int i = 0; i < populationSize; i++)
         {
-            GameObject plane = Instantiate(planePrefab, new Vector3(0, 1, 0), Quaternion.identity);
+            GameObject plane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
             PlaneShape shape = plane.GetComponent<PlaneShape>();
-            shape.wingSpan = Random.Range(1f, 3f); // 翼幅をランダムに設定
-            shape.wingWidth = Random.Range(0.5f, 1.5f); // 翼の幅をランダムに設定
-            shape.tailHeight = Random.Range(0.5f, 1.5f); // 尾翼の高さをランダムに設定
+            shape.wingSpan = Random.Range(5f, 40f); // 翼幅をランダムに設定
+            shape.wingWidth = Random.Range(0.1f, 3f); // 翼の幅をランダムに設定
+            shape.tailHeight = Random.Range(0.1f, 2f); // 尾翼の高さをランダムに設定
+            shape.wingAngle = Random.Range(0f, 10f); // 翼の角度をランダムに設定
             shape.ApplyShape(); // 形状を適用
             population.Add(plane);
+        }
+        IgnoreCollisions();
+    }
+
+    private void IgnoreCollisions()
+    {
+        // 紙飛行機同士の衝突を無効化
+        for (int i = 0; i < populationSize; i++)
+        {
+            for (int j = 0; j < populationSize; j++)
+            {
+                if (i != j)
+                {
+                    Physics.IgnoreCollision(population[i].GetComponent<Collider>(), population[j].GetComponent<Collider>());
+                }
+            }
         }
     }
 
@@ -60,6 +80,7 @@ public class EvolutionManager : MonoBehaviour
             }
 
             population = newPopulation; // 集団を更新
+            IgnoreCollisions();
         }
     }
 
@@ -72,6 +93,11 @@ public class EvolutionManager : MonoBehaviour
             float fitness = plane.GetComponent<FitnessEvaluator>().GetFitness(); // 適応度の取得
             fitnessScores.Add(fitness); // 適応度スコアリストに追加
         }
+
+        // 最大適応度の plane 情報の表示
+        int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
+        PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
+        Debug.Log("wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", tailHeight: " + shape.tailHeight + ", score: " + fitnessScores.Max());
     }
 
     GameObject SelectParent()
@@ -101,7 +127,7 @@ public class EvolutionManager : MonoBehaviour
     GameObject Crossover(GameObject parent1, GameObject parent2)
     {
         // 交叉による新しい個体の生成
-        GameObject offspring = Instantiate(planePrefab, new Vector3(0, 1, 0), Quaternion.identity);
+        GameObject offspring = Instantiate(planePrefab, initialPosition, Quaternion.identity);
         PlaneShape shape1 = parent1.GetComponent<PlaneShape>();
         PlaneShape shape2 = parent2.GetComponent<PlaneShape>();
         PlaneShape shapeOffspring = offspring.GetComponent<PlaneShape>();
@@ -110,6 +136,7 @@ public class EvolutionManager : MonoBehaviour
         shapeOffspring.wingSpan = (shape1.wingSpan + shape2.wingSpan) / 2;
         shapeOffspring.wingWidth = (shape1.wingWidth + shape2.wingWidth) / 2;
         shapeOffspring.tailHeight = (shape1.tailHeight + shape2.tailHeight) / 2;
+        shapeOffspring.wingAngle = (shape1.wingAngle + shape2.wingAngle) / 2;
 
         shapeOffspring.ApplyShape(); // 形状を適用
 
@@ -123,17 +150,22 @@ public class EvolutionManager : MonoBehaviour
 
         if (Random.value < mutationRate)
         {
-            shape.wingSpan += Random.Range(-0.1f, 0.1f); // 翼幅の突然変異
+            shape.wingSpan += Random.Range(-7f, 7f); // 翼幅の突然変異
         }
 
         if (Random.value < mutationRate)
         {
-            shape.wingWidth += Random.Range(-0.1f, 0.1f); // 翼の幅の突然変異
+            shape.wingWidth += Random.Range(-0.5f, 0.5f); // 翼の幅の突然変異
         }
 
         if (Random.value < mutationRate)
         {
-            shape.tailHeight += Random.Range(-0.1f, 0.1f); // 尾翼の高さの突然変異
+            shape.tailHeight += Random.Range(-0.5f, 0.5f); // 尾翼の高さの突然変異
+        }
+
+        if (Random.value < mutationRate)
+        {
+            shape.wingAngle += Random.Range(-0.1f, 0.1f); // 翼の角度の突然変異
         }
 
         shape.ApplyShape(); // 形状を適用

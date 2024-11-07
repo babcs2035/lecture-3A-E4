@@ -1,23 +1,19 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlaneController : MonoBehaviour
 {
-    public float thrust = 10f; // „i—Í
-    public float lift = 5f; // —g—Í
+    public float initialSpeed = 20f; // åˆé€Ÿåº¦
+    public Vector3 initialRotation = new Vector3(-90, 0, 0); // åˆæœŸå›è»¢è§’åº¦
 
-    private Rigidbody rb; // RigidbodyƒRƒ“ƒ|[ƒlƒ“ƒg
+    private Rigidbody rb; // Rigidbodyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>(); // RigidbodyƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìæ“¾
-    }
+        rb = GetComponent<Rigidbody>(); // Rigidbodyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®å–å¾—
 
-    void FixedUpdate()
-    {
-        // ‘O•û‚É„i—Í‚ğ‰Á‚¦‚é
-        rb.AddForce(transform.forward * thrust);
-
-        // ãŒü‚«‚É—g—Í‚ğ‰Á‚¦‚é
-        rb.AddForce(transform.up * lift);
+        rb.linearVelocity = new Vector3(-1, 0, 0) * initialSpeed; // åˆé€Ÿåº¦ã‚’è¨­å®š
+        rb.angularVelocity = new Vector3(0, 0.2f, 0);   // è»½ã„å›è»¢ã‚’åŠ ãˆã‚‹ã“ã¨ã§å®‰å®šåŒ–ã‚’è©¦ã¿ã‚‹
+        transform.rotation = Quaternion.Euler(initialRotation); // åˆæœŸå›è»¢è§’åº¦ã‚’è¨­å®š
     }
 }
