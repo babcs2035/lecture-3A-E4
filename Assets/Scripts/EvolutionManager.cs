@@ -9,11 +9,11 @@ public class EvolutionManager : MonoBehaviour
     public int populationSize; // 集団のサイズ
     public int generations; // 世代数
     public float mutationRate; // 突然変異率
+    public Vector3 initialPosition; // 初期位置
 
     private List<GameObject> population = new List<GameObject>(); // 現在の集団
     private List<float> fitnessScores = new List<float>(); // 各個体の適応度スコア
 
-    private Vector3 initialPosition = new Vector3(25, 15, 0); // 初期位置
 
     void Start()
     {
@@ -28,13 +28,13 @@ public class EvolutionManager : MonoBehaviour
         {
             GameObject plane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
             PlaneShape shape = plane.GetComponent<PlaneShape>();
-            shape.wingSpan = Random.Range(5f, 30f); // 翼幅をランダムに設定
-            shape.wingWidth = Random.Range(0.3f, 1.2f); // 翼の幅をランダムに設定
-            shape.wingAngle = Random.Range(-10f, 10f); // 翼角度をランダムに設定
-            shape.wingShape = Random.Range(0.05f, 0.15f); // 翼形状をランダムに設定
-            shape.tailHeight = Random.Range(0.1f, 2f); // 尾翼の高さをランダムに設定
+            shape.wingSpan = Random.Range(5f, 40f); // 翼幅をランダムに設定
+            shape.wingWidth = Random.Range(0.2f, 3f); // 翼の幅をランダムに設定
+            shape.wingAngle = Random.Range(0f, 45f); // 翼角度をランダムに設定
+            shape.wingShape = Random.Range(0.05f, 0.5f); // 翼形状をランダムに設定
             shape.centerOfMass = Random.Range(-0.5f, 0.5f); // 重心位置をランダムに設定
-            shape.mass = Random.Range(0.8f, 1.4f); // 質量をランダムに設定            shape.ApplyShape(); // 形状を適用
+            shape.mass = Random.Range(0.8f, 1.4f); // 質量をランダムに設定
+            shape.ApplyShape(); // 形状を適用
             population.Add(plane);
         }
         IgnoreCollisions();
@@ -99,7 +99,7 @@ public class EvolutionManager : MonoBehaviour
         // 最大適応度の plane 情報の表示
         int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
-        Debug.Log("wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape + ", tailHeight: " + shape.tailHeight + ", score: " + fitnessScores.Max());
+        Debug.Log("[ " + fitnessScores.Max().ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
     }
 
     GameObject SelectParent()
@@ -139,7 +139,6 @@ public class EvolutionManager : MonoBehaviour
         shapeOffspring.wingWidth = (shape1.wingWidth + shape2.wingWidth) / 2;
         shapeOffspring.wingAngle = (shape1.wingAngle + shape2.wingAngle) / 2;
         shapeOffspring.wingShape = (shape1.wingShape + shape2.wingShape) / 2;
-        shapeOffspring.tailHeight = (shape1.tailHeight + shape2.tailHeight) / 2;
         shapeOffspring.centerOfMass = (shape1.centerOfMass + shape2.centerOfMass) / 2;
         shapeOffspring.mass = (shape1.mass + shape2.mass) / 2;
 
@@ -155,17 +154,20 @@ public class EvolutionManager : MonoBehaviour
 
         if (Random.value < mutationRate)
         {
-            shape.wingSpan += Random.Range(-8f, 8f); // 翼幅の突然変異
+            shape.wingSpan += Random.Range(-5f, 5f); // 翼幅の突然変異
+            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 0.1f, 40f); // 翼幅の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
             shape.wingWidth += Random.Range(-0.5f, 0.5f); // 翼の幅の突然変異
+            shape.wingWidth = Mathf.Clamp(shape.wingWidth, 0.1f, 3f); // 翼の幅の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
-            shape.wingAngle += Random.Range(-1f, 1f); // 翼角度の突然変異
+            shape.wingAngle += Random.Range(-2f, 2f); // 翼角度の突然変異
+            shape.wingAngle = Mathf.Clamp(shape.wingAngle, 0f, 45f); // 翼角度の範囲制限
         }
 
         if (Random.value < mutationRate)
@@ -175,17 +177,12 @@ public class EvolutionManager : MonoBehaviour
 
         if (Random.value < mutationRate)
         {
-            shape.tailHeight += Random.Range(-0.5f, 0.5f); // 尾翼の高さの突然変異
-        }
-
-        if (Random.value < mutationRate)
-        {
             shape.centerOfMass += Random.Range(-0.05f, 0.05f); // 重心位置の突然変異
         }
 
         if (Random.value < mutationRate)
         {
-            shape.mass += Random.Range(-0.05f, 0.05f); // 質量の突然変異
+            shape.mass += Random.Range(-0.5f, 0.5f); // 質量の突然変異
         }
 
         shape.ApplyShape(); // 形状を適用
