@@ -28,8 +28,8 @@ public class EvolutionManager : MonoBehaviour
         {
             GameObject plane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
             PlaneShape shape = plane.GetComponent<PlaneShape>();
-            shape.wingSpan = Random.Range(5f, 40f); // 翼幅をランダムに設定
-            shape.wingWidth = Random.Range(0.2f, 3f); // 翼の幅をランダムに設定
+            shape.wingSpan = Random.Range(5f, 30f); // 翼幅をランダムに設定
+            shape.wingWidth = Random.Range(0.2f, 2f); // 翼の幅をランダムに設定
             shape.wingAngle = Random.Range(0f, 45f); // 翼角度をランダムに設定
             shape.wingShape = Random.Range(0.05f, 0.5f); // 翼形状をランダムに設定
             shape.centerOfMass = Random.Range(-0.5f, 0.5f); // 重心位置をランダムに設定
@@ -155,13 +155,13 @@ public class EvolutionManager : MonoBehaviour
         if (Random.value < mutationRate)
         {
             shape.wingSpan += Random.Range(-5f, 5f); // 翼幅の突然変異
-            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 0.1f, 40f); // 翼幅の範囲制限
+            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 0.1f, 30f); // 翼幅の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
             shape.wingWidth += Random.Range(-0.5f, 0.5f); // 翼の幅の突然変異
-            shape.wingWidth = Mathf.Clamp(shape.wingWidth, 0.1f, 3f); // 翼の幅の範囲制限
+            shape.wingWidth = Mathf.Clamp(shape.wingWidth, 0.1f, 2f); // 翼の幅の範囲制限
         }
 
         if (Random.value < mutationRate)

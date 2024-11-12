@@ -8,7 +8,7 @@ public class PlaneShape : MonoBehaviour
     public float wingShape; // 翼形状
     public float centerOfMass; // 重心位置
     public float mass; // 質量
-    public float liftScale = 0.5f; // 揚力スケーリングファクター
+    public float liftScale; // 揚力スケーリングファクター
 
     public float initialSpeed; // 初速度
     public Vector3 initialRotation; // 初期回転角度
