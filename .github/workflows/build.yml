@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
+      - name: Cache
+        uses: actions/cache@main
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
       - name: Run the Windows build
         uses: game-ci/unity-builder@main
         env:
