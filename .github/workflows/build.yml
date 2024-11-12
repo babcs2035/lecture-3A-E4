@@ -11,6 +11,13 @@ jobs:
     name: Run the unity build steps
     runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
       - name: Checkout
         uses: actions/checkout@main
       - name: Cache
