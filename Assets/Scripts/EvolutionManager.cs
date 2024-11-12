@@ -5,14 +5,17 @@ using System.Linq;
 
 public class EvolutionManager : MonoBehaviour
 {
-    public GameObject planePrefab; // 紙飛行機のプレハブ
-    public int populationSize; // 集団のサイズ
-    public int generations; // 世代数
-    public float mutationRate; // 突然変異率
-    public Vector3 initialPosition; // 初期位置
+    public GameObject planePrefab;                          // 紙飛行機のプレハブ
+    [SerializeField] private int populationSize;            // 集団のサイズ
+    [SerializeField] private int generations;               // 世代数
+    [SerializeField] private float mutationRate;            // 突然変異率
+    [SerializeField] private float crossoverRate;           // 交叉率
+    [SerializeField] private int eliteSize;                 // エリート選択のサイズ
+    [SerializeField] private int tournamentSelection;       // トーナメント選択のサイズ
+    [SerializeField] private Vector3 initialPosition;       // 初期位置
 
-    private List<GameObject> population = new List<GameObject>(); // 現在の集団
-    private List<float> fitnessScores = new List<float>(); // 各個体の適応度スコア
+    private List<GameObject> population = new List<GameObject>();   // 現在の集団
+    private List<float> fitnessScores = new List<float>();          // 各個体の適応度スコア
 
     void Start()
     {
@@ -56,16 +59,12 @@ public class EvolutionManager : MonoBehaviour
 
     IEnumerator Evolve()
     {
-        const int eliteSize = 5; // エリート選択のサイズ
-        const float mutate_only = 0.3f;
-        const int tournamentSelection = 5; // トーナメント選択のサイズ
-
         // 指定された世代数だけ進化を繰り返す
         for (int generation = 0; generation < generations; generation++)
         {
             yield return new WaitForSeconds(5); // シミュレーション時間の待機
 
-            EvaluateFitness(); // 適応度の評価
+            EvaluateFitness(generation); // 適応度の評価
             List<GameObject> newPopulation = new List<GameObject>(); // 新しい集団
 
             // 新しい集団を生成
@@ -76,12 +75,12 @@ public class EvolutionManager : MonoBehaviour
             }
 
             // トーナメント選択 + 突然変異
-            while (newPopulation.Count < populationSize * mutate_only)
+            while (newPopulation.Count < populationSize * mutationRate)
             {
                 var tournamentMembers = population.AsEnumerable().OrderBy(x => System.Guid.NewGuid()).Take(tournamentSelection).ToList();
                 tournamentMembers.Sort(CompareGenes);
                 newPopulation.Add(Mutate(tournamentMembers[0]));
-                if (newPopulation.Count < populationSize * mutate_only) newPopulation.Add(Mutate(tournamentMembers[1]));
+                if (newPopulation.Count < populationSize * mutationRate) newPopulation.Add(Mutate(tournamentMembers[1]));
             }
 
             // トーナメント選択 + 交叉
@@ -109,7 +108,7 @@ public class EvolutionManager : MonoBehaviour
         }
     }
 
-    void EvaluateFitness()
+    void EvaluateFitness(int gen)
     {
         // 各個体の適応度を評価
         fitnessScores.Clear();
@@ -122,7 +121,7 @@ public class EvolutionManager : MonoBehaviour
         // 最大適応度の plane 情報の表示
         int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
-        Debug.Log("[ " + fitnessScores.Max().ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
+        Debug.Log("Gen " + gen + ": [ " + fitnessScores.Max().ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
     }
 
     // 適応度で降順ソートするための関数
@@ -188,19 +187,19 @@ public class EvolutionManager : MonoBehaviour
         PlaneShape shapeOffspring1 = offspring1.GetComponent<PlaneShape>();
         PlaneShape shapeOffspring2 = offspring2.GetComponent<PlaneShape>();
 
-        shapeOffspring1.wingSpan = Random.value < 0.5f ? shape1.wingSpan : shape2.wingSpan;
-        shapeOffspring1.wingWidth = Random.value < 0.5f ? shape1.wingWidth : shape2.wingWidth;
-        shapeOffspring1.wingAngle = Random.value < 0.5f ? shape1.wingAngle : shape2.wingAngle;
-        shapeOffspring1.wingShape = Random.value < 0.5f ? shape1.wingShape : shape2.wingShape;
-        shapeOffspring1.centerOfMass = Random.value < 0.5f ? shape1.centerOfMass : shape2.centerOfMass;
-        shapeOffspring1.mass = Random.value < 0.5f ? shape1.mass : shape2.mass;
+        shapeOffspring1.wingSpan = Random.value < crossoverRate ? shape1.wingSpan : shape2.wingSpan;
+        shapeOffspring1.wingWidth = Random.value < crossoverRate ? shape1.wingWidth : shape2.wingWidth;
+        shapeOffspring1.wingAngle = Random.value < crossoverRate ? shape1.wingAngle : shape2.wingAngle;
+        shapeOffspring1.wingShape = Random.value < crossoverRate ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring1.centerOfMass = Random.value < crossoverRate ? shape1.centerOfMass : shape2.centerOfMass;
+        shapeOffspring1.mass = Random.value < crossoverRate ? shape1.mass : shape2.mass;
 
-        shapeOffspring2.wingSpan = Random.value < 0.5f ? shape1.wingSpan : shape2.wingSpan;
-        shapeOffspring2.wingWidth = Random.value < 0.5f ? shape1.wingWidth : shape2.wingWidth;
-        shapeOffspring2.wingAngle = Random.value < 0.5f ? shape1.wingAngle : shape2.wingAngle;
-        shapeOffspring2.wingShape = Random.value < 0.5f ? shape1.wingShape : shape2.wingShape;
-        shapeOffspring2.centerOfMass = Random.value < 0.5f ? shape1.centerOfMass : shape2.centerOfMass;
-        shapeOffspring2.mass = Random.value < 0.5f ? shape1.mass : shape2.mass;
+        shapeOffspring2.wingSpan = Random.value < crossoverRate ? shape1.wingSpan : shape2.wingSpan;
+        shapeOffspring2.wingWidth = Random.value < crossoverRate ? shape1.wingWidth : shape2.wingWidth;
+        shapeOffspring2.wingAngle = Random.value < crossoverRate ? shape1.wingAngle : shape2.wingAngle;
+        shapeOffspring2.wingShape = Random.value < crossoverRate ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring2.centerOfMass = Random.value < crossoverRate ? shape1.centerOfMass : shape2.centerOfMass;
+        shapeOffspring2.mass = Random.value < crossoverRate ? shape1.mass : shape2.mass;
 
         shapeOffspring1.ApplyShape();
         shapeOffspring2.ApplyShape();

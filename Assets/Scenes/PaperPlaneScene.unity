@@ -360,6 +360,9 @@ MonoBehaviour:
   populationSize: 10
   generations: 50
   mutationRate: 0.3
+  crossoverRate: 0.3
+  eliteSize: 5
+  tournamentSelection: 5
   initialPosition: {x: 30, y: 15, z: 0}
 --- !u!1 &576211678 stripped
 GameObject:
