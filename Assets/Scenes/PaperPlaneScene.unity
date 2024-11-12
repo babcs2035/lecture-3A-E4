@@ -432,7 +432,7 @@ MonoBehaviour:
   wingShape: 0.1
   centerOfMass: 0
   mass: 1.15
-  liftScale: 0.25
+  liftScale: 0.22
   initialSpeed: 20
   initialRotation: {x: -90, y: 0, z: 0}
   leftWing: {fileID: 289073880}

@@ -92,8 +92,10 @@ public class EvolutionManager : MonoBehaviour
 
                 GameObject child1, child2;
                 (child1, child2) = Crossover(tournamentMembers[0], tournamentMembers[1]);
-                newPopulation.Add(child1);
-                if (newPopulation.Count < populationSize) newPopulation.Add(child2);
+                newPopulation.Add(Instantiate(child1, initialPosition, Quaternion.identity));
+                if (newPopulation.Count < populationSize) newPopulation.Add(Instantiate(child2, initialPosition, Quaternion.identity));
+                Destroy(child1);
+                Destroy(child2);
             }
 
             // ŒÃ‚¢W’c‚ð”jŠü
