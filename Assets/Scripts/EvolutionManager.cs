@@ -14,7 +14,6 @@ public class EvolutionManager : MonoBehaviour
     private List<GameObject> population = new List<GameObject>(); // 現在の集団
     private List<float> fitnessScores = new List<float>(); // 各個体の適応度スコア
 
-
     void Start()
     {
         InitializePopulation(); // 集団の初期化
@@ -57,6 +56,10 @@ public class EvolutionManager : MonoBehaviour
 
     IEnumerator Evolve()
     {
+        const int eliteSize = 5; // エリート選択のサイズ
+        const float mutate_only = 0.3f;
+        const int tournamentSelection = 5; // トーナメント選択のサイズ
+
         // 指定された世代数だけ進化を繰り返す
         for (int generation = 0; generation < generations; generation++)
         {
@@ -66,13 +69,31 @@ public class EvolutionManager : MonoBehaviour
             List<GameObject> newPopulation = new List<GameObject>(); // 新しい集団
 
             // 新しい集団を生成
-            for (int i = 0; i < populationSize; i++)
+            population.Sort(CompareGenes); // 適応度で降順ソート
+            for (int i = 0; i < eliteSize; ++i)
             {
-                GameObject parent1 = SelectParent(); // 親1の選択
-                GameObject parent2 = SelectParent(); // 親2の選択
-                GameObject offspring = Crossover(parent1, parent2); // 交叉による子の生成
-                Mutate(offspring); // 突然変異の適用
-                newPopulation.Add(offspring); // 新しい集団に追加
+                newPopulation.Add(Instantiate(population[i], initialPosition, Quaternion.identity)); // エリート選択
+            }
+
+            // トーナメント選択 + 突然変異
+            while (newPopulation.Count < populationSize * mutate_only)
+            {
+                var tournamentMembers = population.AsEnumerable().OrderBy(x => System.Guid.NewGuid()).Take(tournamentSelection).ToList();
+                tournamentMembers.Sort(CompareGenes);
+                newPopulation.Add(Mutate(tournamentMembers[0]));
+                if (newPopulation.Count < populationSize * mutate_only) newPopulation.Add(Mutate(tournamentMembers[1]));
+            }
+
+            // トーナメント選択 + 交叉
+            while (newPopulation.Count < populationSize)
+            {
+                var tournamentMembers = population.AsEnumerable().OrderBy(x => System.Guid.NewGuid()).Take(tournamentSelection).ToList();
+                tournamentMembers.Sort(CompareGenes);
+
+                GameObject child1, child2;
+                (child1, child2) = Crossover(tournamentMembers[0], tournamentMembers[1]);
+                newPopulation.Add(child1);
+                if (newPopulation.Count < populationSize) newPopulation.Add(child2);
             }
 
             // 古い集団を破棄
@@ -102,55 +123,21 @@ public class EvolutionManager : MonoBehaviour
         Debug.Log("[ " + fitnessScores.Max().ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
     }
 
-    GameObject SelectParent()
+    // 適応度で降順ソートするための関数
+    private static int CompareGenes(GameObject a, GameObject b)
     {
-        // 適応度に基づいて親を選択するルーレット選択
-        float totalFitness = 0;
-        foreach (float score in fitnessScores)
-        {
-            totalFitness += score; // 総適応度の計算
-        }
-
-        float randomPoint = Random.Range(0, totalFitness); // ランダムな選択ポイント
-        float runningSum = 0;
-
-        for (int i = 0; i < populationSize; i++)
-        {
-            runningSum += fitnessScores[i];
-            if (runningSum > randomPoint)
-            {
-                return population[i]; // 選択された親を返す
-            }
-        }
-
-        return population[populationSize - 1]; // デフォルトで最後の個体を返す
+        float fitness_a = a.GetComponent<FitnessEvaluator>().GetFitness(); // 適応度の取得
+        float fitness_b = b.GetComponent<FitnessEvaluator>().GetFitness(); // 適応度の取得
+        if (fitness_a > fitness_b) return -1;
+        if (fitness_b > fitness_a) return 1;
+        return 0;
     }
 
-    GameObject Crossover(GameObject parent1, GameObject parent2)
-    {
-        // 交叉による新しい個体の生成
-        GameObject offspring = Instantiate(planePrefab, initialPosition, Quaternion.identity);
-        PlaneShape shape1 = parent1.GetComponent<PlaneShape>();
-        PlaneShape shape2 = parent2.GetComponent<PlaneShape>();
-        PlaneShape shapeOffspring = offspring.GetComponent<PlaneShape>();
-
-        // 親の形状パラメータを平均して子に設定
-        shapeOffspring.wingSpan = (shape1.wingSpan + shape2.wingSpan) / 2;
-        shapeOffspring.wingWidth = (shape1.wingWidth + shape2.wingWidth) / 2;
-        shapeOffspring.wingAngle = (shape1.wingAngle + shape2.wingAngle) / 2;
-        shapeOffspring.wingShape = (shape1.wingShape + shape2.wingShape) / 2;
-        shapeOffspring.centerOfMass = (shape1.centerOfMass + shape2.centerOfMass) / 2;
-        shapeOffspring.mass = (shape1.mass + shape2.mass) / 2;
-
-        shapeOffspring.ApplyShape(); // 形状を適用
-
-        return offspring;
-    }
-
-    void Mutate(GameObject plane)
+    GameObject Mutate(GameObject plane)
     {
         // 突然変異の適用
-        PlaneShape shape = plane.GetComponent<PlaneShape>();
+        var newPlane = plane;
+        PlaneShape shape = newPlane.GetComponent<PlaneShape>();
 
         if (Random.value < mutationRate)
         {
@@ -186,5 +173,36 @@ public class EvolutionManager : MonoBehaviour
         }
 
         shape.ApplyShape(); // 形状を適用
+        return newPlane;
+    }
+
+    (GameObject, GameObject) Crossover(GameObject parent1, GameObject parent2)
+    {
+        // 交叉による新しい個体の生成
+        GameObject offspring1 = Instantiate(planePrefab, initialPosition, Quaternion.identity);
+        GameObject offspring2 = Instantiate(planePrefab, initialPosition, Quaternion.identity);
+        PlaneShape shape1 = parent1.GetComponent<PlaneShape>();
+        PlaneShape shape2 = parent2.GetComponent<PlaneShape>();
+        PlaneShape shapeOffspring1 = offspring1.GetComponent<PlaneShape>();
+        PlaneShape shapeOffspring2 = offspring2.GetComponent<PlaneShape>();
+
+        shapeOffspring1.wingSpan = Random.value < 0.5f ? shape1.wingSpan : shape2.wingSpan;
+        shapeOffspring1.wingWidth = Random.value < 0.5f ? shape1.wingWidth : shape2.wingWidth;
+        shapeOffspring1.wingAngle = Random.value < 0.5f ? shape1.wingAngle : shape2.wingAngle;
+        shapeOffspring1.wingShape = Random.value < 0.5f ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring1.centerOfMass = Random.value < 0.5f ? shape1.centerOfMass : shape2.centerOfMass;
+        shapeOffspring1.mass = Random.value < 0.5f ? shape1.mass : shape2.mass;
+
+        shapeOffspring2.wingSpan = Random.value < 0.5f ? shape1.wingSpan : shape2.wingSpan;
+        shapeOffspring2.wingWidth = Random.value < 0.5f ? shape1.wingWidth : shape2.wingWidth;
+        shapeOffspring2.wingAngle = Random.value < 0.5f ? shape1.wingAngle : shape2.wingAngle;
+        shapeOffspring2.wingShape = Random.value < 0.5f ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring2.centerOfMass = Random.value < 0.5f ? shape1.centerOfMass : shape2.centerOfMass;
+        shapeOffspring2.mass = Random.value < 0.5f ? shape1.mass : shape2.mass;
+
+        shapeOffspring1.ApplyShape();
+        shapeOffspring2.ApplyShape();
+
+        return (offspring1, offspring2);
     }
 }
