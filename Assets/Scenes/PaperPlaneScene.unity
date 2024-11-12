@@ -293,9 +293,9 @@ WindZone:
   m_Enabled: 1
   m_Mode: 1
   m_Radius: 15
-  m_WindMain: 2
+  m_WindMain: 5
   m_WindTurbulence: 2
-  m_WindPulseMagnitude: 0.5
+  m_WindPulseMagnitude: 1
   m_WindPulseFrequency: 1
 --- !u!4 &372309367
 Transform:
