@@ -5,7 +5,7 @@ public class PlaneShape : MonoBehaviour
     public float wingSpan; // 翼幅
     public float wingLength; // 翼の長さ
     public float wingAngle; // 翼角度
-    public float wingShape; // 翼形状
+    public float wingThickness; // 翼の厚さ
     public float liftScale; // 揚力スケーリングファクター
 
     public float initialSpeed; // 初速度
@@ -37,12 +37,12 @@ public class PlaneShape : MonoBehaviour
         rightWing.localScale = new Vector3(wingLength, rightWing.localScale.y, wingSpan);
 
         // 翼の角度を適用
-        leftWing.localEulerAngles = new Vector3(leftWing.localEulerAngles.x, leftWing.localEulerAngles.y, leftWing.localEulerAngles.z);
-        rightWing.localEulerAngles = new Vector3(rightWing.localEulerAngles.x, leftWing.localEulerAngles.y, rightWing.localEulerAngles.z);
+        leftWing.localEulerAngles = new Vector3(leftWing.localEulerAngles.x + wingAngle, leftWing.localEulerAngles.y, leftWing.localEulerAngles.z);
+        rightWing.localEulerAngles = new Vector3(rightWing.localEulerAngles.x - wingAngle, rightWing.localEulerAngles.y, rightWing.localEulerAngles.z);
 
         // 翼形状を適用（例として、翼の厚さを変更）
-        leftWing.localScale = new Vector3(leftWing.localScale.x, wingShape, leftWing.localScale.z);
-        rightWing.localScale = new Vector3(rightWing.localScale.x, wingShape, rightWing.localScale.z);
+        leftWing.localScale = new Vector3(leftWing.localScale.x, wingThickness, leftWing.localScale.z);
+        rightWing.localScale = new Vector3(rightWing.localScale.x, wingThickness, rightWing.localScale.z);
 
         // 質量を適用
         CalcMass();

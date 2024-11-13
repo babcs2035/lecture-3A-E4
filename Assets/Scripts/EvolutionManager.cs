@@ -30,10 +30,10 @@ public class EvolutionManager : MonoBehaviour
         {
             GameObject plane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
             PlaneShape shape = plane.GetComponent<PlaneShape>();
-            shape.wingSpan = Random.Range(2f, 50f); // 翼幅をランダムに設定
-            shape.wingLength = Random.Range(0.1f, 1.7f); // 翼の長さをランダムに設定
-            shape.wingAngle = Random.Range(0f, 20f); // 翼角度をランダムに設定
-            shape.wingShape = Random.Range(0.05f, 0.5f); // 翼形状をランダムに設定
+            shape.wingSpan = Random.Range(1f, 80f); // 翼幅をランダムに設定
+            shape.wingLength = Random.Range(0.1f, 2.5f); // 翼の長さをランダムに設定
+            shape.wingAngle = Random.Range(0f, 3f); // 翼角度をランダムに設定
+            shape.wingThickness = Random.Range(0.02f, 0.3f); // 翼形状をランダムに設定
             shape.ApplyShape(); // 形状を適用
             population.Add(plane);
         }
@@ -120,7 +120,7 @@ public class EvolutionManager : MonoBehaviour
         float avgFitness = fitnessScores.Average();
         int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
-        Debug.Log("Gen " + gen + " [ max: " + fitnessScores.Max().ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingLength: " + shape.wingLength + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
+        Debug.Log("Gen " + gen + " [ max: " + fitnessScores.Max().ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingLength: " + shape.wingLength + ", wingAngle: " + shape.wingAngle + ", wingThickness: " + shape.wingThickness);
     }
 
     // 適応度で降順ソートするための関数
@@ -142,24 +142,25 @@ public class EvolutionManager : MonoBehaviour
         if (Random.value < mutationRate)
         {
             shape.wingSpan += Random.Range(-5f, 5f); // 翼幅の突然変異
-            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 2f, 50f); // 翼幅の範囲制限
+            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 1f, 80f); // 翼幅の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
             shape.wingLength += Random.Range(-0.4f, 0.4f); // 翼の長さの突然変異
-            shape.wingLength = Mathf.Clamp(shape.wingLength, 0.1f, 1.7f); // 翼の長さの範囲制限
+            shape.wingLength = Mathf.Clamp(shape.wingLength, 0.1f, 2.5f); // 翼の長さの範囲制限
         }
 
         if (Random.value < mutationRate)
         {
-            shape.wingAngle += Random.Range(-2f, 2f); // 翼角度の突然変異
-            shape.wingAngle = Mathf.Clamp(shape.wingAngle, 0f, 20f); // 翼角度の範囲制限
+            shape.wingAngle += Random.Range(-0.8f, 0.8f); // 翼角度の突然変異
+            shape.wingAngle = Mathf.Clamp(shape.wingAngle, 0f, 3f); // 翼角度の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
-            shape.wingShape += Random.Range(-0.02f, 0.02f); // 翼形状の突然変異
+            shape.wingThickness += Random.Range(-0.08f, 0.08f); // 翼の厚さの突然変異
+            shape.wingThickness = Mathf.Clamp(shape.wingThickness, 0.02f, 0.3f); // 翼の厚さの範囲制限
         }
 
         shape.ApplyShape(); // 形状を適用
@@ -179,12 +180,12 @@ public class EvolutionManager : MonoBehaviour
         shapeOffspring1.wingSpan = Random.value < crossoverRate ? shape1.wingSpan : shape2.wingSpan;
         shapeOffspring1.wingLength = Random.value < crossoverRate ? shape1.wingLength : shape2.wingLength;
         shapeOffspring1.wingAngle = Random.value < crossoverRate ? shape1.wingAngle : shape2.wingAngle;
-        shapeOffspring1.wingShape = Random.value < crossoverRate ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring1.wingThickness = Random.value < crossoverRate ? shape1.wingThickness : shape2.wingThickness;
 
         shapeOffspring2.wingSpan = Random.value < crossoverRate ? shape1.wingSpan : shape2.wingSpan;
         shapeOffspring2.wingLength = Random.value < crossoverRate ? shape1.wingLength : shape2.wingLength;
         shapeOffspring2.wingAngle = Random.value < crossoverRate ? shape1.wingAngle : shape2.wingAngle;
-        shapeOffspring2.wingShape = Random.value < crossoverRate ? shape1.wingShape : shape2.wingShape;
+        shapeOffspring2.wingThickness = Random.value < crossoverRate ? shape1.wingThickness : shape2.wingThickness;
 
         shapeOffspring1.ApplyShape();
         shapeOffspring2.ApplyShape();
