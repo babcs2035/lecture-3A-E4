@@ -30,12 +30,12 @@ public class EvolutionManager : MonoBehaviour
         {
             GameObject plane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
             PlaneShape shape = plane.GetComponent<PlaneShape>();
-            shape.wingSpan = Random.Range(5f, 30f); // 翼幅をランダムに設定
-            shape.wingWidth = Random.Range(0.2f, 2f); // 翼の幅をランダムに設定
+            shape.wingSpan = Random.Range(5f, 35f); // 翼幅をランダムに設定
+            shape.wingWidth = Random.Range(0.2f, 3f); // 翼の幅をランダムに設定
             shape.wingAngle = Random.Range(0f, 45f); // 翼角度をランダムに設定
             shape.wingShape = Random.Range(0.05f, 0.5f); // 翼形状をランダムに設定
             shape.centerOfMass = Random.Range(-0.5f, 0.5f); // 重心位置をランダムに設定
-            shape.mass = Random.Range(0.8f, 1.4f); // 質量をランダムに設定
+            shape.mass = Random.Range(0.8f, 1.5f); // 質量をランダムに設定
             shape.ApplyShape(); // 形状を適用
             population.Add(plane);
         }
@@ -118,10 +118,11 @@ public class EvolutionManager : MonoBehaviour
             fitnessScores.Add(fitness); // 適応度スコアリストに追加
         }
 
-        // 最大適応度の plane 情報の表示
+        // 適応度情報の表示
+        float avgFitness = fitnessScores.Average();
         int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
-        Debug.Log("Gen " + gen + ": [ " + fitnessScores.Max().ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
+        Debug.Log("Gen " + gen + " [ max: " + fitnessScores.Max().ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingWidth: " + shape.wingWidth + ", wingAngle: " + shape.wingAngle + ", wingShape: " + shape.wingShape);
     }
 
     // 適応度で降順ソートするための関数
@@ -143,13 +144,13 @@ public class EvolutionManager : MonoBehaviour
         if (Random.value < mutationRate)
         {
             shape.wingSpan += Random.Range(-5f, 5f); // 翼幅の突然変異
-            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 0.1f, 30f); // 翼幅の範囲制限
+            shape.wingSpan = Mathf.Clamp(shape.wingSpan, 0.1f, 35f); // 翼幅の範囲制限
         }
 
         if (Random.value < mutationRate)
         {
             shape.wingWidth += Random.Range(-0.5f, 0.5f); // 翼の幅の突然変異
-            shape.wingWidth = Mathf.Clamp(shape.wingWidth, 0.1f, 2f); // 翼の幅の範囲制限
+            shape.wingWidth = Mathf.Clamp(shape.wingWidth, 0.1f, 3f); // 翼の幅の範囲制限
         }
 
         if (Random.value < mutationRate)
@@ -171,6 +172,7 @@ public class EvolutionManager : MonoBehaviour
         if (Random.value < mutationRate)
         {
             shape.mass += Random.Range(-0.5f, 0.5f); // 質量の突然変異
+            shape.mass = Mathf.Clamp(shape.mass, 0.8f, 1.5f); // 質量の範囲制限
         }
 
         shape.ApplyShape(); // 形状を適用
