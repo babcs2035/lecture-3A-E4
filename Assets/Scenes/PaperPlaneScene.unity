@@ -417,12 +417,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planePrefab: {fileID: 576211678}
-  populationSize: 10
+  populationSize: 30
   generations: 50
   mutationRate: 0.3
-  crossoverRate: 0.3
+  crossoverRate: 0.2
   eliteSize: 5
-  tournamentSelection: 5
+  tournamentSelection: 10
   initialPosition: {x: 30, y: 15, z: 0}
 --- !u!1 &576211678 stripped
 GameObject:
@@ -444,7 +444,7 @@ MonoBehaviour:
   wingSpan: 20
   wingLength: 0
   wingAngle: 0
-  wingShape: 0.1
+  wingThickness: 0
   liftScale: 1
   initialSpeed: 25
   initialRotation: {x: -90, y: 0, z: 0}

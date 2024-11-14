@@ -77,8 +77,8 @@ public class EvolutionManager : MonoBehaviour
             {
                 var tournamentMembers = population.AsEnumerable().OrderBy(x => System.Guid.NewGuid()).Take(tournamentSelection).ToList();
                 tournamentMembers.Sort(CompareGenes);
-                newPopulation.Add(Mutate(tournamentMembers[0]));
-                if (newPopulation.Count < populationSize * mutationRate) newPopulation.Add(Mutate(tournamentMembers[1]));
+                newPopulation.Add(Instantiate(Mutate(tournamentMembers[0]), initialPosition, Quaternion.identity));
+                if (newPopulation.Count < populationSize * mutationRate) newPopulation.Add(Instantiate(Mutate(tournamentMembers[1]), initialPosition, Quaternion.identity));
             }
 
             // トーナメント選択 + 交叉
