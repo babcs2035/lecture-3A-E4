@@ -6,13 +6,14 @@ public class PlaneShape : MonoBehaviour
     public float wingLength; // 翼の長さ
     public float wingAngle; // 翼角度
     public float wingThickness; // 翼の厚さ
-    public float liftScale; // 揚力スケーリングファクター
-
-    public float initialSpeed; // 初速度
-    public Vector3 initialRotation; // 初期回転角度
 
     public Transform leftWing; // 左翼のTransform
     public Transform rightWing; // 右翼のTransform
+
+    [SerializeField] private float initialSpeed; // 初速度
+    [SerializeField] private Vector3 initialRotation; // 初期回転角度
+    [SerializeField] private float liftScale; // 揚力スケーリングファクター
+    [SerializeField] float materialDensity; // 材料の密度 (kg/m^3) - 紙の密度の例
 
     private Rigidbody rb; // Rigidbodyコンポーネント
     private BoxCollider boxCollider;
@@ -74,8 +75,6 @@ public class PlaneShape : MonoBehaviour
 
     private void CalcMass()
     {
-        const float materialDensity = 800f; // 材料の密度 (kg/m^3) - 紙の密度の例
-
         Renderer bodyRenderer = transform.GetComponent<Renderer>();
         Vector3 bodyLocalScale = transform.localScale;
         Vector3 bodySize = Vector3.Scale(bodyRenderer.bounds.size, bodyLocalScale);
