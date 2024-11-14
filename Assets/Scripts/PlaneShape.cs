@@ -35,8 +35,8 @@ public class PlaneShape : MonoBehaviour
         rightWing.localScale = new Vector3(wingLength, rightWing.localScale.y, wingSpan);
 
         // 翼の角度を適用
-        leftWing.localEulerAngles = new Vector3(leftWing.localEulerAngles.x + wingAngle, leftWing.localEulerAngles.y, leftWing.localEulerAngles.z);
-        rightWing.localEulerAngles = new Vector3(rightWing.localEulerAngles.x - wingAngle, rightWing.localEulerAngles.y, rightWing.localEulerAngles.z);
+        leftWing.localEulerAngles = new Vector3(leftWing.localEulerAngles.x, leftWing.localEulerAngles.y + wingAngle, leftWing.localEulerAngles.z);
+        rightWing.localEulerAngles = new Vector3(rightWing.localEulerAngles.x, rightWing.localEulerAngles.y + wingAngle, rightWing.localEulerAngles.z);
 
         // 翼形状を適用（例として、翼の厚さを変更）
         leftWing.localScale = new Vector3(leftWing.localScale.x, wingThickness, leftWing.localScale.z);

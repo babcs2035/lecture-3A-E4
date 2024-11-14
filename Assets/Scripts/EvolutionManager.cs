@@ -35,7 +35,7 @@ public class EvolutionManager : MonoBehaviour
             PlaneShape shape = plane.GetComponent<PlaneShape>();
             shape.wingSpan = Random.Range(1f, 100f); // 翼幅をランダムに設定
             shape.wingLength = Random.Range(0.2f, 2.5f); // 翼の長さをランダムに設定
-            shape.wingAngle = Random.Range(0f, 3f); // 翼角度をランダムに設定
+            shape.wingAngle = Random.Range(0f, 45f); // 翼角度をランダムに設定
             shape.wingThickness = Random.Range(0.1f, 0.5f); // 翼形状をランダムに設定
             shape.ApplyShape(); // 形状を適用
             population.Add(plane);
@@ -183,7 +183,7 @@ public class EvolutionManager : MonoBehaviour
         if (Random.value < mutationRate)
         {
             shape.wingAngle += Random.Range(-0.8f, 0.8f); // 翼角度の突然変異
-            shape.wingAngle = Mathf.Clamp(shape.wingAngle, 0f, 3f); // 翼角度の範囲制限
+            shape.wingAngle = Mathf.Clamp(shape.wingAngle, 0f, 45f); // 翼角度の範囲制限
         }
 
         if (Random.value < mutationRate)
