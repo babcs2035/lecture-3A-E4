@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.IO;
 
 public class EvolutionManager : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class EvolutionManager : MonoBehaviour
 
     private List<GameObject> population = new List<GameObject>();   // 現在の集団
     private List<float> fitnessScores = new List<float>();          // 各個体の適応度スコア
+    private List<float> maxFitnessScores = new List<float>();       // 各世代の最大適応度スコア
+    private List<float> avgFitnessScores = new List<float>();       // 各世代の平均適応度スコア
 
     void Start()
     {
@@ -23,7 +26,7 @@ public class EvolutionManager : MonoBehaviour
         StartCoroutine(Evolve()); // 進化プロセスの開始
     }
 
-    void InitializePopulation()
+    private void InitializePopulation()
     {
         // 集団を初期化し、ランダムな形状パラメータで紙飛行機を生成
         for (int i = 0; i < populationSize; i++)
@@ -55,7 +58,7 @@ public class EvolutionManager : MonoBehaviour
         }
     }
 
-    IEnumerator Evolve()
+    private IEnumerator Evolve()
     {
         // 指定された世代数だけ進化を繰り返す
         for (int generation = 0; generation < generations; generation++)
@@ -113,9 +116,17 @@ public class EvolutionManager : MonoBehaviour
             population = newPopulation;
             IgnoreCollisions();
         }
+        SaveFitnessDataToFile();
+
+        // End Unity App
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
-    void EvaluateFitness(int gen)
+    private void EvaluateFitness(int gen)
     {
         // 各個体の適応度を評価
         float maxFitness = 0, sumFitness = 0;
@@ -136,6 +147,10 @@ public class EvolutionManager : MonoBehaviour
         float avgFitness = sumFitness / populationSize;
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
         Debug.Log("\tGen " + gen + "\t[ max: " + maxFitness.ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ]\twingSpan: " + shape.wingSpan.ToString("F2") + ", wingLength: " + shape.wingLength.ToString("F2") + ", wingAngle: " + shape.wingAngle.ToString("F2") + ", wingThickness: " + shape.wingThickness.ToString("F2"));
+
+        // 適応度情報の保存
+        maxFitnessScores.Add(maxFitness);
+        avgFitnessScores.Add(avgFitness);
     }
 
     // 適応度で降順ソートするための関数
@@ -148,7 +163,7 @@ public class EvolutionManager : MonoBehaviour
         return 0;
     }
 
-    GameObject Mutate(GameObject plane)
+    private GameObject Mutate(GameObject plane)
     {
         // 突然変異の適用
         PlaneShape shape = plane.GetComponent<PlaneShape>();
@@ -189,7 +204,7 @@ public class EvolutionManager : MonoBehaviour
         return newPlane;
     }
 
-    (GameObject, GameObject) Crossover(GameObject parent1, GameObject parent2)
+    private (GameObject, GameObject) Crossover(GameObject parent1, GameObject parent2)
     {
         // 交叉による新しい個体の生成
         GameObject offspring1 = Instantiate(planePrefab, initialPosition, Quaternion.identity);
@@ -213,5 +228,29 @@ public class EvolutionManager : MonoBehaviour
         shapeOffspring2.ApplyShape();
 
         return (offspring1, offspring2);
+    }
+    private void SaveFitnessDataToFile()
+    {
+        // 現在の日付と時刻を取得
+        string timestamp = System.DateTime.Now.ToString("yyyyMMdd-HHmmss");
+
+        // データを書き出すファイルパス
+        string directoryPath = Path.Combine(Application.dataPath, "Outputs/Fitness/");
+        string fileName = $"{timestamp}.txt";
+        string filePath = Path.Combine(directoryPath, fileName);
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            for (int i = 0; i < maxFitnessScores.Count; i++)
+            {
+                writer.WriteLine($"{maxFitnessScores[i]},{avgFitnessScores[i]}");
+            }
+        }
+
+        Debug.Log("Saved fitness data: " + filePath);
     }
 }
