@@ -77,8 +77,16 @@ public class EvolutionManager : MonoBehaviour
             {
                 var tournamentMembers = population.AsEnumerable().OrderBy(x => System.Guid.NewGuid()).Take(tournamentSelection).ToList();
                 tournamentMembers.Sort(CompareGenes);
-                newPopulation.Add(Instantiate(Mutate(tournamentMembers[0]), initialPosition, Quaternion.identity));
-                if (newPopulation.Count < populationSize * mutationRate) newPopulation.Add(Instantiate(Mutate(tournamentMembers[1]), initialPosition, Quaternion.identity));
+
+                var child1 = Mutate(tournamentMembers[0]);
+                newPopulation.Add(Instantiate(child1, initialPosition, Quaternion.identity));
+                Destroy(child1);
+                if (newPopulation.Count < populationSize * mutationRate)
+                {
+                    var child2 = Mutate(tournamentMembers[1]);
+                    newPopulation.Add(Instantiate(child2, initialPosition, Quaternion.identity));
+                    Destroy(child2);
+                }
             }
 
             // トーナメント選択 + 交叉
@@ -101,7 +109,8 @@ public class EvolutionManager : MonoBehaviour
                 Destroy(plane);
             }
 
-            population = newPopulation; // 集団を更新
+            // 集団を更新
+            population = newPopulation;
             IgnoreCollisions();
         }
     }
@@ -109,18 +118,24 @@ public class EvolutionManager : MonoBehaviour
     void EvaluateFitness(int gen)
     {
         // 各個体の適応度を評価
-        fitnessScores.Clear();
-        foreach (GameObject plane in population)
+        float maxFitness = 0, sumFitness = 0;
+        int maxIndex = 0;
+        for (int i = 0; i < populationSize; i++)
         {
+            var plane = population[i];
             float fitness = plane.GetComponent<FitnessEvaluator>().GetFitness(); // 適応度の取得
-            fitnessScores.Add(fitness); // 適応度スコアリストに追加
+            if (fitness > maxFitness)
+            {
+                maxFitness = fitness;
+                maxIndex = i;
+            }
+            sumFitness += fitness;
         }
 
         // 適応度情報の表示
-        float avgFitness = fitnessScores.Average();
-        int maxIndex = fitnessScores.IndexOf(fitnessScores.Max());
+        float avgFitness = sumFitness / populationSize;
         PlaneShape shape = population[maxIndex].GetComponent<PlaneShape>();
-        Debug.Log("Gen " + gen + " [ max: " + fitnessScores.Max().ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingLength: " + shape.wingLength + ", wingAngle: " + shape.wingAngle + ", wingThickness: " + shape.wingThickness);
+        Debug.Log("Gen " + gen + " [ max: " + maxFitness.ToString("F3") + ", avg: " + avgFitness.ToString("F3") + " ] wingSpan: " + shape.wingSpan + ", wingLength: " + shape.wingLength + ", wingAngle: " + shape.wingAngle + ", wingThickness: " + shape.wingThickness);
     }
 
     // 適応度で降順ソートするための関数
@@ -136,8 +151,7 @@ public class EvolutionManager : MonoBehaviour
     GameObject Mutate(GameObject plane)
     {
         // 突然変異の適用
-        var newPlane = plane;
-        PlaneShape shape = newPlane.GetComponent<PlaneShape>();
+        PlaneShape shape = plane.GetComponent<PlaneShape>();
 
         if (Random.value < mutationRate)
         {
@@ -163,7 +177,15 @@ public class EvolutionManager : MonoBehaviour
             shape.wingThickness = Mathf.Clamp(shape.wingThickness, 0.02f, 0.3f); // 翼の厚さの範囲制限
         }
 
-        shape.ApplyShape(); // 形状を適用
+        // 形状を適用
+        GameObject newPlane = Instantiate(planePrefab, initialPosition, Quaternion.identity);
+        PlaneShape newShape = newPlane.GetComponent<PlaneShape>();
+        newShape.wingSpan = shape.wingSpan;
+        newShape.wingLength = shape.wingLength;
+        newShape.wingAngle = shape.wingAngle;
+        newShape.wingThickness = shape.wingThickness;
+        newShape.ApplyShape();
+
         return newPlane;
     }
 

@@ -17,15 +17,12 @@ public class PlaneShape : MonoBehaviour
     private Rigidbody rb; // Rigidbodyコンポーネント
     private BoxCollider boxCollider;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
 
         rb.linearVelocity = new Vector3(-1, 0, 0) * initialSpeed; // 初速度を設定
         rb.rotation = Quaternion.Euler(initialRotation); // 初期回転角度を設定
-        //rb.angularVelocity = new Vector3(0, 0.2f, 0);   // 軽い回転を加えることで安定化を試みる
-
-        ApplyShape(); // 初期形状の適用
     }
 
     public void ApplyShape()
