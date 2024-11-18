@@ -63,7 +63,11 @@ public class EvolutionManager : MonoBehaviour
         // 指定された世代数だけ進化を繰り返す
         for (int generation = 0; generation < generations; generation++)
         {
-            yield return new WaitForSeconds(5); // シミュレーション時間の待機
+            // 全個体の isAlive が false になるまで待機
+            do
+            {
+                yield return new WaitForSeconds(1);
+            } while (population.Any(plane => plane.GetComponent<FitnessEvaluator>().IsAlive()));
 
             EvaluateFitness(generation); // 適応度の評価
             List<GameObject> newPopulation = new List<GameObject>(); // 新しい集団
@@ -235,7 +239,7 @@ public class EvolutionManager : MonoBehaviour
         string timestamp = System.DateTime.Now.ToString("yyyyMMdd-HHmmss");
 
         // データを書き出すファイルパス
-        string directoryPath = Path.Combine(Application.dataPath, "Outputs/Fitness/");
+        string directoryPath = Path.Combine(Application.dataPath, "Outputs/Distance/");
         string fileName = $"{timestamp}.txt";
         string filePath = Path.Combine(directoryPath, fileName);
         if (!Directory.Exists(directoryPath))
@@ -251,6 +255,6 @@ public class EvolutionManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Saved fitness data: " + filePath);
+        Debug.Log("Saved distance data: " + filePath);
     }
 }

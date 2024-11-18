@@ -27,7 +27,7 @@ def read_data_from_file(file_path):
 
 
 # ディレクトリのパス
-directory_path = "Fitness/"  # ディレクトリ名を指定
+directory_path = "Distance/"  # ディレクトリ名を指定
 
 # 最新のファイルを取得
 latest_file_path = get_latest_file(directory_path)
@@ -41,8 +41,8 @@ plt.figure(figsize=(10, 5))
 plt.plot(data1, label="Max")
 plt.plot(data2, label="Avg")
 plt.xlabel("Generation")
-plt.ylabel("Fitness")
-plt.title("Fitness")
+plt.ylabel("Distance")
+plt.title("Evlolution of Distance")
 plt.legend()
 plt.grid(True)
 plt.savefig(latest_file_path.replace(".txt", ".png"))
