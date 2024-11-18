@@ -521,7 +521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planePrefab: {fileID: 576211678}
   populationSize: 50
-  generations: 50
+  generations: 100
   mutationRate: 0.5
   crossoverRate: 0.5
   eliteSize: 5
@@ -1352,12 +1352,20 @@ PrefabInstance:
       value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 3171056021557518787, guid: 0b214cc02371b544abf6074f618b134f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3171056021557518787, guid: 0b214cc02371b544abf6074f618b134f, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3171056021557518787, guid: 0b214cc02371b544abf6074f618b134f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3171056021557518787, guid: 0b214cc02371b544abf6074f618b134f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
