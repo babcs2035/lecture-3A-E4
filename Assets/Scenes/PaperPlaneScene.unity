@@ -525,7 +525,7 @@ MonoBehaviour:
   mutationRate: 0.5
   crossoverRate: 0.5
   eliteSize: 5
-  tournamentSelection: 25
+  tournamentSelection: 20
   initialPosition: {x: 30, y: 15, z: 0}
 --- !u!114 &507789302
 MonoBehaviour:
@@ -540,6 +540,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeSlider: {fileID: 2049722403}
+--- !u!1 &525918175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 525918177}
+  - component: {fileID: 525918176}
+  m_Layer: 0
+  m_Name: WindZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!182 &525918176
+WindZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525918175}
+  m_Enabled: 1
+  m_Mode: 0
+  m_Radius: 20
+  m_WindMain: 10
+  m_WindTurbulence: 5
+  m_WindPulseMagnitude: 1
+  m_WindPulseFrequency: 0.1
+--- !u!4 &525918177
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525918175}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -20, y: 10, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &576211678 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0b214cc02371b544abf6074f618b134f, type: 3}
@@ -566,7 +612,7 @@ MonoBehaviour:
   initialSpeed: 25
   initialRotation: {x: -90, y: 0, z: 0}
   liftScale: 1
-  materialDensity: 800
+  materialDensity: 1000
 --- !u!114 &576211688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,7 +1508,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 925312433}
   m_Direction: 0
   m_MinValue: 1
-  m_MaxValue: 10
+  m_MaxValue: 15
   m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:
@@ -1479,3 +1525,4 @@ SceneRoots:
   - {fileID: 1652096024}
   - {fileID: 1403003601}
   - {fileID: 90999727}
+  - {fileID: 525918177}
