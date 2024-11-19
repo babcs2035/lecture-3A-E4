@@ -373,7 +373,7 @@ MonoBehaviour:
   wingThickness: 0
   leftWing: {fileID: 1323771039}
   rightWing: {fileID: 297296902}
-  initialSpeed: 25
+  initialSpeed: 30
   initialRotation: {x: -90, y: 0, z: 0}
   liftScale: 1
   materialDensity: 800
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planePrefab: {fileID: 226510833}
   populationSize: 50
-  generations: 80
+  generations: 64
   mutationRate: 0.5
   crossoverRate: 0.5
   eliteSize: 5
