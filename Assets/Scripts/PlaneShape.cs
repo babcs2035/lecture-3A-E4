@@ -31,16 +31,12 @@ public class PlaneShape : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         // 翼の形状を適用
-        leftWing.localScale = new Vector3(wingLength, leftWing.localScale.y, wingSpan);
-        rightWing.localScale = new Vector3(wingLength, rightWing.localScale.y, wingSpan);
+        leftWing.localScale = new Vector3(wingLength, wingSpan, wingThickness);
+        rightWing.localScale = new Vector3(wingLength, wingSpan, wingThickness);
 
         // 翼の角度を適用
         leftWing.localEulerAngles = new Vector3(leftWing.localEulerAngles.x, leftWing.localEulerAngles.y + wingAngle, leftWing.localEulerAngles.z);
         rightWing.localEulerAngles = new Vector3(rightWing.localEulerAngles.x, rightWing.localEulerAngles.y + wingAngle, rightWing.localEulerAngles.z);
-
-        // 翼形状を適用（例として、翼の厚さを変更）
-        leftWing.localScale = new Vector3(leftWing.localScale.x, wingThickness, leftWing.localScale.z);
-        rightWing.localScale = new Vector3(rightWing.localScale.x, wingThickness, rightWing.localScale.z);
 
         // 質量を適用
         CalcMass();
@@ -78,13 +74,14 @@ public class PlaneShape : MonoBehaviour
         Renderer bodyRenderer = transform.GetComponent<Renderer>();
         Vector3 bodyLocalScale = transform.localScale;
         Vector3 bodySize = Vector3.Scale(bodyRenderer.bounds.size, bodyLocalScale);
-        float mass = bodySize.x * bodySize.y * bodySize.z * materialDensity / 10;
+        //float mass = bodySize.x * bodySize.y * bodySize.z * materialDensity / 10;
 
         Transform wingTransform = transform.Find("LeftWing");
-        Renderer wingRenderer = wingTransform.GetComponent<Renderer>();
-        Vector3 wingLocalScale = wingTransform.localScale;
-        Vector3 wingSize = Vector3.Scale(wingRenderer.bounds.size, wingLocalScale);
-        mass += wingSize.x * wingSize.y * wingSize.z * materialDensity * 2 * 3;
+        //Renderer wingRenderer = wingTransform.GetComponent<Renderer>();
+        //Vector3 wingLocalScale = wingTransform.localScale;
+        //Vector3 wingSize = Vector3.Scale(wingRenderer.bounds.size, wingLocalScale);
+        //mass += wingSize.x * wingSize.y * wingSize.z * materialDensity * 2 * 3;
+        float mass = wingSpan * wingLength * wingThickness * materialDensity * 2;
 
         // 質量をRigidbodyに適用
         rb.mass = mass;

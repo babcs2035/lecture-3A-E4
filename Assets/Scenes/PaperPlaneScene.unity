@@ -295,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1774294784468724574, guid: 460fbfecfc4803f479ca0ce6d8a0087d, type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 460fbfecfc4803f479ca0ce6d8a0087d, type: 3}
       propertyPath: m_Name
@@ -681,11 +681,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planePrefab: {fileID: 226510833}
   populationSize: 50
-  generations: 70
+  generations: 80
   mutationRate: 0.5
   crossoverRate: 0.5
   eliteSize: 5
-  tournamentSelection: 20
+  tournamentSelection: 10
   initialPosition: {x: 30, y: 15, z: 0}
 --- !u!114 &507789302
 MonoBehaviour:
@@ -1495,7 +1495,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 925312433}
   m_Direction: 0
   m_MinValue: 1
-  m_MaxValue: 15
+  m_MaxValue: 10
   m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:
