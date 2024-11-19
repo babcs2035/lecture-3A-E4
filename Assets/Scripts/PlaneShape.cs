@@ -84,7 +84,7 @@ public class PlaneShape : MonoBehaviour
         Renderer wingRenderer = wingTransform.GetComponent<Renderer>();
         Vector3 wingLocalScale = wingTransform.localScale;
         Vector3 wingSize = Vector3.Scale(wingRenderer.bounds.size, wingLocalScale);
-        mass += wingSize.x * wingSize.y * wingSize.z * materialDensity * 2;
+        mass += wingSize.x * wingSize.y * wingSize.z * materialDensity * 2 * 3;
 
         // 質量をRigidbodyに適用
         rb.mass = mass;
