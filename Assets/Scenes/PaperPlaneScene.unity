@@ -375,8 +375,8 @@ MonoBehaviour:
   rightWing: {fileID: 297296902}
   initialSpeed: 30
   initialRotation: {x: -90, y: 0, z: 0}
-  liftScale: 1
-  materialDensity: 800
+  liftScale: 0.9
+  materialDensity: 1800
 --- !u!54 &226510838
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -682,8 +682,8 @@ MonoBehaviour:
   planePrefab: {fileID: 226510833}
   populationSize: 50
   generations: 64
-  mutationRate: 0.5
-  crossoverRate: 0.5
+  mutationRate: 0.2
+  crossoverRate: 0.2
   eliteSize: 5
   tournamentSelection: 10
   initialPosition: {x: 30, y: 15, z: 0}
@@ -1495,7 +1495,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 925312433}
   m_Direction: 0
   m_MinValue: 1
-  m_MaxValue: 10
+  m_MaxValue: 15
   m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:

@@ -77,11 +77,11 @@ public class PlaneShape : MonoBehaviour
         //float mass = bodySize.x * bodySize.y * bodySize.z * materialDensity / 10;
 
         Transform wingTransform = transform.Find("LeftWing");
-        //Renderer wingRenderer = wingTransform.GetComponent<Renderer>();
-        //Vector3 wingLocalScale = wingTransform.localScale;
-        //Vector3 wingSize = Vector3.Scale(wingRenderer.bounds.size, wingLocalScale);
-        //mass += wingSize.x * wingSize.y * wingSize.z * materialDensity * 2 * 3;
-        float mass = wingSpan * wingLength * wingThickness * materialDensity * 2;
+        Renderer wingRenderer = wingTransform.GetComponent<Renderer>();
+        Vector3 wingLocalScale = wingTransform.localScale;
+        Vector3 wingSize = Vector3.Scale(wingRenderer.bounds.size, wingLocalScale);
+        float mass = wingSize.x * wingSize.y * wingSize.z * materialDensity * 2;
+        //float mass = wingSpan * wingLength * wingThickness * materialDensity * 2;
 
         // 質量をRigidbodyに適用
         rb.mass = mass;
